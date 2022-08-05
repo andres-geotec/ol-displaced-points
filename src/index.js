@@ -1,4 +1,4 @@
 /**
- * @module ol-PointsDisplacement
+ * @module ol-displaced-points
  */
-export { default as PointsDisplacement } from './PointsDisplacement';
+export { default as DisplacedPoints } from "./DisplacedPoints";
