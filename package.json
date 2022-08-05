@@ -1,5 +1,5 @@
 {
-  "name": "ol-points-displacement",
+  "name": "ol-displaced-points",
   "version": "0.0.0",
   "description": "La metodología desplazamiento de puntos funciona para visualizar todas las entidades de una capa de puntos, incluso si tienen la misma ubicación. Para hacer esto, el mapa toma los puntos que caen en una tolerancia de Distancia dada entre sí (clúster) y los coloca alrededor de su baricentro.",
   "main": "src/index.js",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/andres-geotec/ol-points-displacement.git"
+    "url": "git+https://github.com/andres-geotec/ol-displaced-points.git"
   },
   "keywords": [
     "ol",
@@ -26,14 +26,11 @@
   "author": "Andrés Martínez <andres.geotec@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/andres-geotec/ol-points-displacement/issues"
+    "url": "https://github.com/andres-geotec/ol-displaced-points/issues"
   },
-  "homepage": "https://github.com/andres-geotec/ol-points-displacement#readme",
+  "homepage": "https://github.com/andres-geotec/ol-displaced-points#readme",
   "dependencies": {
     "ol": "~6.15.1"
-  },
-  "devDependencies": {
-    "parcel-bundler": "^1.12.5"
   },
   "optionalDependencies": {
     "eslint": "^8.21.0"
