@@ -27,5 +27,14 @@
   "bugs": {
     "url": "https://github.com/andres-geotec/ol-points-displacement/issues"
   },
-  "homepage": "https://github.com/andres-geotec/ol-points-displacement#readme"
+  "homepage": "https://github.com/andres-geotec/ol-points-displacement#readme",
+  "dependencies": {
+    "ol": "^6.15.1"
+  },
+  "devDependencies": {
+    "parcel": "^2.7.0"
+  },
+  "optionalDependencies": {
+    "eslint": "^8.21.0"
+  }
 }
