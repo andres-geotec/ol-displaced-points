@@ -4,7 +4,6 @@
   "description": "La metodología desplazamiento de puntos funciona para visualizar todas las entidades de una capa de puntos, incluso si tienen la misma ubicación. Para hacer esto, el mapa toma los puntos que caen en una tolerancia de Distancia dada entre sí (clúster) y los coloca alrededor de su baricentro.",
   "main": "src/index.js",
   "scripts": {
-    "start": "parcel src/index.html --open",
     "test": "test"
   },
   "repository": {

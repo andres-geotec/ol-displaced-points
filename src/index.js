@@ -1,4 +1,6 @@
 /**
  * @module ol-displaced-points
  */
-export { default as DisplacedPoints } from "./DisplacedPoints";
+import DisplacedPoints from "./DisplacedPoints";
+
+export default DisplacedPoints;
