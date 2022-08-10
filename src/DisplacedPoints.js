@@ -9,6 +9,21 @@ import methodsPlacement from "./methodsPlacement";
 import Cluster from "./Cluster";
 import CircleProperties from "./Circle";
 
+/**
+ * @typedef {Object} Options
+ * @property {string} [methodPlacement=ring] methodPlacement
+ * @property {number} [radioCenterPoint=6] radioCenterPoint
+ * @property {number} [radioDisplacedPoints=6] radioDisplacedPoints
+ */
+
+/**
+ * @classdesc
+ * La metodología desplazamiento de puntos funciona para visualizar todas las
+ * entidades de una capa de puntos, incluso si tienen la misma ubicación.
+ *
+ * Para hacer esto, el mapa toma los puntos que caen en una tolerancia de
+ * Distancia dada entre sí (clúster) y los coloca alrededor de su baricentro.
+ */
 class DisplacedPoints extends Cluster {
   /**
    * @param {Options} options DisplacedPoints options.
@@ -19,9 +34,9 @@ class DisplacedPoints extends Cluster {
 
     /**
      * @type {string}
-     * @protected
+     * @private
      */
-    this.methodPlacement = methodsPlacement[options.methodPlacement || "ring"];
+    this.methodPlacement = options.methodPlacement || "ring";
 
     /**
      * @type {number}
@@ -35,9 +50,36 @@ class DisplacedPoints extends Cluster {
      */
     this.radioDisplacedPoints = options.radioDisplacedPoints || 6;
 
+    /**
+     * @type {Array<Feature>}
+     * @protected
+     */
+    this.displacedFeatures = [];
+
+    /**
+     * @type {Array<Feature>}
+     * @protected
+     */
+    this.displacedRings = [];
+
+    /**
+     * @type {Array<Feature>}
+     * @protected
+     */
+    this.displacedConnectors = [];
+  }
+
+  /**
+   * Remove all features from the source.
+   * @param {boolean} [opt_fast] Skip dispatching of {@link module:ol/source/VectorEventType~VectorEventType#removefeature} events.
+   * @api
+   */
+  clear(opt_fast) {
+    this.features.length = 0;
     this.displacedFeatures = [];
     this.displacedRings = [];
     this.displacedConnectors = [];
+    super.clear(opt_fast);
   }
 
   /**
@@ -46,16 +88,16 @@ class DisplacedPoints extends Cluster {
   refresh() {
     this.clear();
     this.cluster();
-    // this.addFeatures(this.features);
-    this.addFeatures([...this.features, ...this.displacedPoints()]);
+    this.displacedPoints();
+    this.addFeatures(this.allFeatures());
   }
 
   allFeatures() {
     return [
-      ...this.displacedRings,
       ...this.displacedConnectors,
-      ...this.displacedFeatures,
+      ...this.displacedRings,
       ...this.features,
+      ...this.displacedFeatures,
     ];
   }
 
@@ -64,16 +106,15 @@ class DisplacedPoints extends Cluster {
    * @protected
    */
   displacedPoints() {
-    if (this.features.length) {
+    /*if (this.features.length) {
       const cluster = this.features[0];
-      return this.pointsGroup(cluster.get("geometry"), cluster.get("features"));
-    }
+      this.pointsGroup(cluster.get("geometry"), cluster.get("features"));
+      return;
+    }*/
 
-    return this.features
-      .map((cluster) =>
-        this.pointsGroup(cluster.get("geometry"), cluster.get("features"))
-      )
-      .flat();
+    this.features.forEach((cluster) => {
+      this.pointsGroup(cluster.get("geometry"), cluster.get("features"));
+    });
   }
 
   /**
@@ -83,9 +124,7 @@ class DisplacedPoints extends Cluster {
    * @protected
    */
   pointsGroup(center, features) {
-    if (features.length === 1) {
-      return [];
-    }
+    if (features.length === 1) return;
 
     /**
      * Teorema de Pitágoras
@@ -115,86 +154,71 @@ class DisplacedPoints extends Cluster {
      */
     const hypotenuseCenter = this.radioCenterPoint * Math.SQRT2;
 
-    // return [];
-
-    return this.Ring(
+    ({
+      ring: this.Ring,
+    })[this.methodPlacement](
       center.getCoordinates(),
-      this.numberToPixelUnits(hypotenuseCenterAndPoints),
-      this.numberToPixelUnits(hypotenuseCenter),
-      features,
-      this.resolution
+      hypotenuseCenterAndPoints,
+      hypotenuseCenter,
+      features
     );
   }
 
   /**
    *
-   * @param {*} centerPoint
-   * @param {*} symbolDiagonal
-   * @param {*} circleAdditionPainterUnits
-   * @param {*} features
-   * @param {*} resolution
-   * @returns
+   * @param {number} centerCords
+   * @param {number} hypotenuseCenterAndPoints
+   * @param {number} hypotenuseCenter
+   * @param {Array<Feature>} features
    */
-  Ring(
-    centerPoint,
+  Ring = (
+    centerCords,
     hypotenuseCenterAndPoints,
     hypotenuseCenter,
-    features,
-    resolution
-  ) {
-    var featuresNuevos = [];
+    features
+  ) => {
     const nFeatures = features.length;
 
     const minCircleToFitPoints = new CircleProperties({
       circumference: nFeatures * hypotenuseCenterAndPoints,
     });
-
     const maxDisplacementDistance = Math.max(
       hypotenuseCenterAndPoints / 2,
       minCircleToFitPoints.radius
     );
-
-    /**
-     * @type {number}
-     */
     const radiusOfTheRing = maxDisplacementDistance + hypotenuseCenter;
 
-    featuresNuevos.push(
-      this.createRing(centerPoint, {
-        anillo: {
-          radius: this.pixelUnitsToNumber(radiusOfTheRing),
-        },
-      })
-    );
+    this.addRing(centerCords, {
+      radius: radiusOfTheRing,
+    });
 
+    const radiusOfTheRingPix = this.numberToPixelUnits(radiusOfTheRing);
     const angleStep = (2 * Math.PI) / nFeatures;
     var currentAngle = 0.0;
 
     features.forEach((feature) => {
-      featuresNuevos.push(
-        this.changeCoordinatesOfFeature(feature, [
-          centerPoint[0] + radiusOfTheRing * Math.sin(currentAngle),
-          centerPoint[1] + radiusOfTheRing * Math.cos(currentAngle),
-        ])
-      );
+      this.addDisplacedPoints(feature, [
+        centerCords[0] + radiusOfTheRingPix * Math.sin(currentAngle),
+        centerCords[1] + radiusOfTheRingPix * Math.cos(currentAngle),
+      ]);
 
       currentAngle += angleStep;
     });
+  };
 
-    return featuresNuevos;
+  addRing(coordinates, options) {
+    this.displacedRings.push(
+      new Feature({
+        geometry: new Point(coordinates),
+        anillo: options,
+      })
+    );
   }
 
-  createRing(coordinates, options) {
-    return new Feature({
-      geometry: new Point(coordinates),
-      ...options,
-    });
-  }
-
-  changeCoordinatesOfFeature(feature, p) {
+  addDisplacedPoints(feature, coordinates) {
     const newFeature = feature.clone();
-    newFeature.setGeometry(new Point(p));
-    return newFeature;
+    newFeature.setGeometry(new Point(coordinates));
+    this.displacedFeatures.push(newFeature);
   }
 
   /**
