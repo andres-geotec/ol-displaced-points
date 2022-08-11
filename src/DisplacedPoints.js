@@ -128,7 +128,8 @@ class DisplacedPoints extends Cluster {
 
     /**
      * Teorema de Pitágoras
-     * c² = √(b² + a²)
+     * c² = b² + a²
+     * c = √(b² + a²)
      * Math.SQRT2 = √(1² + 1²)
      * Math.SQRT2 = Math.pow(2, 1/2)
      */
