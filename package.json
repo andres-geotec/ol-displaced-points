@@ -2,9 +2,11 @@
   "name": "ol-displaced-points",
   "version": "0.0.1",
   "description": "La metodología desplazamiento de puntos funciona para visualizar todas las entidades de una capa de puntos, incluso si tienen la misma ubicación. Para hacer esto, el mapa toma los puntos que caen en una tolerancia de Distancia dada entre sí (clúster) y los coloca alrededor de su baricentro.",
-  "main": "src/index.js",
   "scripts": {
-    "test": "test"
+    "pre-transpile": "shx rm -rf build/ol-displaced-points && shx mkdir -p build/ol-displaced-points && shx cp -rf src build/ol-displaced-points/src",
+    "transpile": "npm run pre-transpile && tsc --project config/tsconfig-build.json",
+    "generate-types": "tsc --project config/tsconfig-build.json --declaration --declarationMap --emitDeclarationOnly --outdir build/ol-displaced-points",
+    "build-package": "npm run transpile && npm run generate-types && node tasks/prepare-package.js"
   },
   "repository": {
     "type": "git",
@@ -33,5 +35,13 @@
   },
   "optionalDependencies": {
     "eslint": "^8.21.0"
+  },
+  "devDependencies": {
+    "es-main": "^1.2.0",
+    "fs-extra": "^10.1.0",
+    "path": "^0.12.7",
+    "shx": "^0.3.4",
+    "typescript": "^4.7.4",
+    "url": "^0.11.0"
   }
 }

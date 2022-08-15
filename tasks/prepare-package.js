@@ -13,6 +13,7 @@ async function main() {
   pkg.main = "index.js";
   delete pkg.scripts;
   delete pkg.devDependencies;
+  delete pkg.optionalDependencies;
   delete pkg.style;
   delete pkg.eslintConfig;
   delete pkg.private;
