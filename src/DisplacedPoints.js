@@ -260,6 +260,18 @@ class DisplacedPoints extends Cluster {
         pointsRemaining
       );
 
+      const angleStep = (2 * Math.PI) / actualPointsCurrentRing;
+      var currentAngle = 0;
+      for (var i = 0; i < actualPointsCurrentRing; ++i) {
+        this.addDisplacedPoints(features[featureIndex], [
+          centerCords[0] + radiusCurrentRing * Math.sin(currentAngle),
+          centerCords[1] + radiusCurrentRing * Math.cos(currentAngle),
+        ]);
+
+        currentAngle += angleStep;
+        featureIndex++;
+      }
+
       pointsRemaining -= actualPointsCurrentRing;
       ringNumber++;
     }
