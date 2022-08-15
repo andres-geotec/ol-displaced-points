@@ -6,7 +6,7 @@ import Feature from "ol/Feature";
 import Point from "ol/geom/Point";
 
 import Cluster from "./Cluster";
-import CircleProperties from "./Circle";
+import Circle from "circle-properties";
 
 /**
  * @typedef {Object} Options
@@ -169,15 +169,10 @@ class DisplacedPoints extends Cluster {
    * @param {number} hypotenuseCenter
    * @param {Array<Feature>} features
    */
-  Ring(
-    centerCords,
-    hypotenuseCenterAndPoints,
-    hypotenuseCenter,
-    features
-  ) {
+  Ring(centerCords, hypotenuseCenterAndPoints, hypotenuseCenter, features) {
     const nFeatures = features.length;
 
-    const minCircleToFitPoints = new CircleProperties({
+    const minCircleToFitPoints = new Circle({
       circumference: nFeatures * hypotenuseCenterAndPoints,
     });
     const maxDisplacementDistance = Math.max(
@@ -202,7 +197,7 @@ class DisplacedPoints extends Cluster {
 
       currentAngle += angleStep;
     });
-  };
+  }
 
   addRing(coordinates, options) {
     this.displacedRings.push(

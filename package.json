@@ -32,6 +32,7 @@
   },
   "homepage": "https://github.com/andres-geotec/ol-displaced-points#readme",
   "dependencies": {
+    "circle-properties": "~0.1.1",
     "ol": "~6.15.1"
   },
   "optionalDependencies": {
