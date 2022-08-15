@@ -5,7 +5,6 @@
 import Feature from "ol/Feature";
 import Point from "ol/geom/Point";
 
-import methodsPlacement from "./methodsPlacement";
 import Cluster from "./Cluster";
 import CircleProperties from "./Circle";
 

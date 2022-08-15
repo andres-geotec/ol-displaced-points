@@ -44,7 +44,7 @@ class Circle {
     if (this.properties.circumference) return this.properties.circumference;
 
     if (this.properties.radius) {
-      return circumferenceRadius(this.properties.radius);
+      return circumferenceFromRadius(this.properties.radius);
     }
 
     if (this.properties.diameter) {
@@ -89,9 +89,7 @@ class Circle {
    *
    */
   get diameter() {
-    if (!this.properties.diameter) {
-      return this.properties.diameter;
-    }
+    if (this.properties.diameter) return this.properties.diameter;
 
     if (this.properties.circumference) {
       return diameterFromCircumference(this.properties.circumference);
@@ -100,8 +98,6 @@ class Circle {
     if (this.properties.radius) {
       return diameterFromRadius(this.properties.radius);
     }
-
-    return undefined;
   }
 
   /**
@@ -118,7 +114,7 @@ class Circle {
 
 export default Circle;
 
-export function circumferenceRadius(radius) {
+export function circumferenceFromRadius(radius) {
   return circumferenceFromDiameter(2 * radius);
 }
 
