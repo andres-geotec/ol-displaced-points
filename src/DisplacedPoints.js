@@ -226,6 +226,43 @@ class DisplacedPoints extends Cluster {
     features
   ) {
     console.log("ConcentricRings");
+    const nFeatures = features.length;
+
+    const centerDiagonal = this.radioCenterPoint * this.resolution;
+
+    var pointsRemaining = nFeatures;
+    var ringNumber = 1;
+    const firstRingRadius =
+      centerDiagonal / 2.0 + hypotenuseCenterAndPoints / 2.0;
+    var featureIndex = 0;
+
+    while (pointsRemaining > 0) {
+      const radiusCurrentRing = Math.max(
+        firstRingRadius +
+          (ringNumber - 1) * hypotenuseCenterAndPoints +
+          ringNumber * hypotenuseCenter,
+        0.0
+      );
+
+      // featuresNuevos.push(
+      this.addRing(centerCords, {
+        radius: radiusCurrentRing / this.resolution,
+      });
+
+      const maxPointsCurrentRing = Math.max(
+        Math.floor(
+          (2 * Math.PI * radiusCurrentRing) / hypotenuseCenterAndPoints
+        ),
+        1.0
+      );
+      const actualPointsCurrentRing = Math.min(
+        maxPointsCurrentRing,
+        pointsRemaining
+      );
+
+      pointsRemaining -= actualPointsCurrentRing;
+      ringNumber++;
+    }
   }
 
   addRing(coordinates, options) {
