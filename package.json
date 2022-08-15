@@ -8,6 +8,7 @@
     "generate-types": "tsc --project config/tsconfig-build.json --declaration --declarationMap --emitDeclarationOnly --outdir build/ol-displaced-points",
     "build-package": "npm run transpile && npm run generate-types && node tasks/prepare-package.js"
   },
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/andres-geotec/ol-displaced-points.git"
