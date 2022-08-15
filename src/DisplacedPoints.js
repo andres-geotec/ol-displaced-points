@@ -10,7 +10,7 @@ import Circle from "circle-properties";
 
 /**
  * @typedef {Object} Options
- * @property {string} [methodPlacement=ring] methodPlacement
+ * @property {string} [methodPlacement=ring] methodPlacement: ring | concentric-rings | grid
  * @property {number} [radioCenterPoint=6] radioCenterPoint
  * @property {number} [radioDisplacedPoints=6] radioDisplacedPoints
  */
@@ -154,12 +154,32 @@ class DisplacedPoints extends Cluster {
      */
     const hypotenuseCenter = this.radioCenterPoint * Math.SQRT2;
 
-    this.Ring(
-      center.getCoordinates(),
-      hypotenuseCenterAndPoints,
-      hypotenuseCenter,
-      features
-    );
+    switch (this.methodPlacement) {
+      case "ring":
+        this.Ring(
+          center.getCoordinates(),
+          hypotenuseCenterAndPoints,
+          hypotenuseCenter,
+          features
+        );
+        break;
+
+      case "concentric-rings":
+        this.ConcentricRings(
+          center.getCoordinates(),
+          hypotenuseCenterAndPoints,
+          hypotenuseCenter,
+          features
+        );
+        break;
+
+      case "grid":
+        break;
+
+      default:
+        console.error("Metodo de desplazamiento no permitido");
+        break;
+    }
   }
 
   /**
@@ -197,6 +217,15 @@ class DisplacedPoints extends Cluster {
 
       currentAngle += angleStep;
     });
+  }
+
+  ConcentricRings(
+    centerCords,
+    hypotenuseCenterAndPoints,
+    hypotenuseCenter,
+    features
+  ) {
+    console.log("ConcentricRings");
   }
 
   addRing(coordinates, options) {
