@@ -154,9 +154,7 @@ class DisplacedPoints extends Cluster {
      */
     const hypotenuseCenter = this.radioCenterPoint * Math.SQRT2;
 
-    ({
-      ring: this.Ring,
-    })[this.methodPlacement](
+    this.Ring(
       center.getCoordinates(),
       hypotenuseCenterAndPoints,
       hypotenuseCenter,
@@ -171,12 +169,12 @@ class DisplacedPoints extends Cluster {
    * @param {number} hypotenuseCenter
    * @param {Array<Feature>} features
    */
-  Ring = (
+  Ring(
     centerCords,
     hypotenuseCenterAndPoints,
     hypotenuseCenter,
     features
-  ) => {
+  ) {
     const nFeatures = features.length;
 
     const minCircleToFitPoints = new CircleProperties({
