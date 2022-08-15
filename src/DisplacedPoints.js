@@ -225,10 +225,8 @@ class DisplacedPoints extends Cluster {
     hypotenuseCenter,
     features
   ) {
-    console.log("ConcentricRings");
     const nFeatures = features.length;
-
-    const centerDiagonal = this.radioCenterPoint * this.resolution;
+    const centerDiagonal = this.radioCenterPoint;
 
     var pointsRemaining = nFeatures;
     var ringNumber = 1;
@@ -244,10 +242,7 @@ class DisplacedPoints extends Cluster {
         0.0
       );
 
-      // featuresNuevos.push(
-      this.addRing(centerCords, {
-        radius: radiusCurrentRing / this.resolution,
-      });
+      this.addRing(centerCords, { radius: radiusCurrentRing });
 
       const maxPointsCurrentRing = Math.max(
         Math.floor(
@@ -261,11 +256,12 @@ class DisplacedPoints extends Cluster {
       );
 
       const angleStep = (2 * Math.PI) / actualPointsCurrentRing;
+      const radiusCurrentRingPix = this.numberToPixelUnits(radiusCurrentRing);
       var currentAngle = 0;
       for (var i = 0; i < actualPointsCurrentRing; ++i) {
         this.addDisplacedPoints(features[featureIndex], [
-          centerCords[0] + radiusCurrentRing * Math.sin(currentAngle),
-          centerCords[1] + radiusCurrentRing * Math.cos(currentAngle),
+          centerCords[0] + radiusCurrentRingPix * Math.sin(currentAngle),
+          centerCords[1] + radiusCurrentRingPix * Math.cos(currentAngle),
         ]);
 
         currentAngle += angleStep;
