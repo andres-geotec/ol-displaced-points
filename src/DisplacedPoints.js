@@ -199,20 +199,18 @@ class DisplacedPoints extends Cluster {
       hypotenuseCenterAndPoints / 2,
       minCircleToFitPoints.radius
     );
-    const radiusOfTheRing = maxDisplacementDistance + hypotenuseCenter;
+    const radiusRing = maxDisplacementDistance + hypotenuseCenter;
 
-    this.addRing(centerCords, {
-      radius: radiusOfTheRing,
-    });
+    this.addRing(centerCords, { radius: radiusRing });
 
-    const radiusOfTheRingPix = this.numberToPixelUnits(radiusOfTheRing);
+    const radiusRingPix = this.numberToPixelUnits(radiusRing);
     const angleStep = (2 * Math.PI) / nFeatures;
     var currentAngle = 0.0;
 
     features.forEach((feature) => {
       this.addDisplacedPoints(feature, [
-        centerCords[0] + radiusOfTheRingPix * Math.sin(currentAngle),
-        centerCords[1] + radiusOfTheRingPix * Math.cos(currentAngle),
+        centerCords[0] + radiusRingPix * Math.sin(currentAngle),
+        centerCords[1] + radiusRingPix * Math.cos(currentAngle),
       ]);
 
       currentAngle += angleStep;
