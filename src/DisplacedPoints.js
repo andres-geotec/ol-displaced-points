@@ -69,6 +69,23 @@ class DisplacedPoints extends Cluster {
   }
 
   /**
+   *
+   * @returns {string}
+   */
+  getMethodPlacement() {
+    return this.methodPlacement;
+  }
+
+  /**
+   * 
+   * @param {string} methodPlacement 
+   */
+  setMethodPlacement(methodPlacement) {
+    this.methodPlacement = methodPlacement;
+    this.refresh();
+  }
+
+  /**
    * Remove all features from the source.
    * @param {boolean} [opt_fast] Skip dispatching of {@link module:ol/source/VectorEventType~VectorEventType#removefeature} events.
    * @api
