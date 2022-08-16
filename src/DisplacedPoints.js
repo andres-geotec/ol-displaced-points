@@ -191,6 +191,12 @@ class DisplacedPoints extends Cluster {
         break;
 
       case "grid":
+        this.Grid(
+          center.getCoordinates(),
+          hypotenuseCenterAndPoints,
+          hypotenuseCenter,
+          features
+        );
         break;
 
       default:
@@ -286,6 +292,10 @@ class DisplacedPoints extends Cluster {
       pointsRemaining -= actualPointsCurrentRing;
       ringNumber++;
     }
+  }
+
+  Grid(centerCords, hypotenuseCenterAndPoints, hypotenuseCenter, features) {
+    console.log("Grid");
   }
 
   addRing(coordinates, options) {
