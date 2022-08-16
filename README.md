@@ -13,6 +13,8 @@ Use the Labels group options to perform points labeling: the labels are placed n
 
 > Note: Point Displacement renderer does not alter feature geometry, meaning that points are not moved from their position. They are still located at their initial place. Changes are only visual, for rendering purpose. Use instead the Processing Points displacement algorithm if you want to create displaced features.
 
+[Qgis Point displacement renderer](https://docs.qgis.org/3.22/en/docs/user_manual/working_with_vector/vector_properties.html#point-displacement-renderer)
+
 
 ## Ring
 ![Salario básico](./docs/mexico-ring.png)
