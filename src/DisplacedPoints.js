@@ -10,7 +10,7 @@ import Circle from "circle-properties";
 
 /**
  * @typedef {Object} Options
- * @property {string} [methodPlacement=ring] methodPlacement
+ * @property {string} [methodPlacement=ring] methodPlacement: ring | concentric-rings | grid
  * @property {number} [radioCenterPoint=6] radioCenterPoint
  * @property {number} [radioDisplacedPoints=6] radioDisplacedPoints
  */
@@ -66,6 +66,23 @@ class DisplacedPoints extends Cluster {
      * @protected
      */
     this.displacedConnectors = [];
+  }
+
+  /**
+   *
+   * @returns {string}
+   */
+  getMethodPlacement() {
+    return this.methodPlacement;
+  }
+
+  /**
+   * 
+   * @param {string} methodPlacement 
+   */
+  setMethodPlacement(methodPlacement) {
+    this.methodPlacement = methodPlacement;
+    this.refresh();
   }
 
   /**
@@ -154,12 +171,32 @@ class DisplacedPoints extends Cluster {
      */
     const hypotenuseCenter = this.radioCenterPoint * Math.SQRT2;
 
-    this.Ring(
-      center.getCoordinates(),
-      hypotenuseCenterAndPoints,
-      hypotenuseCenter,
-      features
-    );
+    switch (this.methodPlacement) {
+      case "ring":
+        this.Ring(
+          center.getCoordinates(),
+          hypotenuseCenterAndPoints,
+          hypotenuseCenter,
+          features
+        );
+        break;
+
+      case "concentric-rings":
+        this.ConcentricRings(
+          center.getCoordinates(),
+          hypotenuseCenterAndPoints,
+          hypotenuseCenter,
+          features
+        );
+        break;
+
+      case "grid":
+        break;
+
+      default:
+        console.error("Metodo de desplazamiento no permitido");
+        break;
+    }
   }
 
   /**
@@ -179,24 +216,76 @@ class DisplacedPoints extends Cluster {
       hypotenuseCenterAndPoints / 2,
       minCircleToFitPoints.radius
     );
-    const radiusOfTheRing = maxDisplacementDistance + hypotenuseCenter;
+    const radiusRing = maxDisplacementDistance + hypotenuseCenter;
 
-    this.addRing(centerCords, {
-      radius: radiusOfTheRing,
-    });
+    this.addRing(centerCords, { radius: radiusRing });
 
-    const radiusOfTheRingPix = this.numberToPixelUnits(radiusOfTheRing);
+    const radiusRingPix = this.numberToPixelUnits(radiusRing);
     const angleStep = (2 * Math.PI) / nFeatures;
     var currentAngle = 0.0;
 
     features.forEach((feature) => {
       this.addDisplacedPoints(feature, [
-        centerCords[0] + radiusOfTheRingPix * Math.sin(currentAngle),
-        centerCords[1] + radiusOfTheRingPix * Math.cos(currentAngle),
+        centerCords[0] + radiusRingPix * Math.sin(currentAngle),
+        centerCords[1] + radiusRingPix * Math.cos(currentAngle),
       ]);
 
       currentAngle += angleStep;
     });
+  }
+
+  ConcentricRings(
+    centerCords,
+    hypotenuseCenterAndPoints,
+    hypotenuseCenter,
+    features
+  ) {
+    const nFeatures = features.length;
+    const centerDiagonal = this.radioCenterPoint;
+
+    var pointsRemaining = nFeatures;
+    var ringNumber = 1;
+    const firstRingRadius =
+      centerDiagonal / 2.0 + hypotenuseCenterAndPoints / 2.0;
+    var featureIndex = 0;
+
+    while (pointsRemaining > 0) {
+      const radiusCurrentRing = Math.max(
+        firstRingRadius +
+          (ringNumber - 1) * hypotenuseCenterAndPoints +
+          ringNumber * hypotenuseCenter,
+        0.0
+      );
+
+      this.addRing(centerCords, { radius: radiusCurrentRing });
+
+      const maxPointsCurrentRing = Math.max(
+        Math.floor(
+          (2 * Math.PI * radiusCurrentRing) / hypotenuseCenterAndPoints
+        ),
+        1.0
+      );
+      const actualPointsCurrentRing = Math.min(
+        maxPointsCurrentRing,
+        pointsRemaining
+      );
+
+      const angleStep = (2 * Math.PI) / actualPointsCurrentRing;
+      const radiusCurrentRingPix = this.numberToPixelUnits(radiusCurrentRing);
+      var currentAngle = 0;
+      for (var i = 0; i < actualPointsCurrentRing; ++i) {
+        this.addDisplacedPoints(features[featureIndex], [
+          centerCords[0] + radiusCurrentRingPix * Math.sin(currentAngle),
+          centerCords[1] + radiusCurrentRingPix * Math.cos(currentAngle),
+        ]);
+
+        currentAngle += angleStep;
+        featureIndex++;
+      }
+
+      pointsRemaining -= actualPointsCurrentRing;
+      ringNumber++;
+    }
   }
 
   addRing(coordinates, options) {
