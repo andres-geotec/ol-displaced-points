@@ -7,6 +7,7 @@ import Point from "ol/geom/Point";
 
 import Cluster from "./Cluster";
 import Circle from "circle-properties";
+import { add as addCoordinate } from "ol/coordinate.js";
 
 /**
  * @typedef {Object} Options
@@ -77,8 +78,8 @@ class DisplacedPoints extends Cluster {
   }
 
   /**
-   * 
-   * @param {string} methodPlacement 
+   *
+   * @param {string} methodPlacement
    */
   setMethodPlacement(methodPlacement) {
     this.methodPlacement = methodPlacement;
@@ -295,7 +296,46 @@ class DisplacedPoints extends Cluster {
   }
 
   Grid(centerCords, hypotenuseCenterAndPoints, hypotenuseCenter, features) {
-    console.log("Grid");
+    var puntosNuevos = [];
+
+    const nFeatures = features.length;
+    // var gridRadius = /** @type {double} */ -1.0;
+    var gridSize = -1;
+
+    const centerDiagonal = this.radioCenterPoint;
+    var pointsRemaining = nFeatures;
+    gridSize = Math.ceil(Math.sqrt(pointsRemaining));
+
+    if (pointsRemaining - Math.pow(gridSize - 1, 2) < gridSize) gridSize -= 1;
+
+    const originalPointRadius =
+      (centerDiagonal / 2 +
+        hypotenuseCenterAndPoints / 2 +
+        hypotenuseCenterAndPoints) /
+      2;
+
+    const userPointRadius = this.numberToPixelUnits(originalPointRadius + hypotenuseCenter);
+
+    var yIndex = 0;
+    while (pointsRemaining > 0) {
+      for (var xIndex = 0; xIndex < gridSize && pointsRemaining > 0; xIndex++) {
+        puntosNuevos.push([
+          centerCords[0] + userPointRadius * xIndex,
+          centerCords[1] + userPointRadius * yIndex,
+        ]);
+        pointsRemaining--;
+      }
+
+      yIndex++;
+    }
+
+    const shiftAmount = (-userPointRadius * (gridSize - 1)) / 2;
+    features.forEach((feature, i) => {
+      this.addDisplacedPoints(
+        feature,
+        addCoordinate(puntosNuevos[i], [shiftAmount, shiftAmount])
+      );
+    });
   }
 
   addRing(coordinates, options) {
