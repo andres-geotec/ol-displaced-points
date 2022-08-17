@@ -3,9 +3,9 @@
 Displaced Points methodology works to visualize all features of a point layer, even if they have the same location. To do this, the map takes the points falling in a given Distance tolerance from each other (cluster) and places them around their barycenter following different Placement methods:
 
 - [**Ring**](#grid): Places all the features on a circle whose radius depends on the number of features to display.
-- [**Concentric Rings**](#concentric-rings)): Uses a set of concentric circles to show the features.
-- [**Spiral**](#spiral)): Creates a spiral with the features farthest from the center of the group in each turn.
-- [**Grid**](#grid)): Generates a regular grid with a point symbol at each intersection.
+- [**Concentric Rings**](#concentric-rings): Uses a set of concentric circles to show the features.
+- [**Spiral**](#spiral): Creates a spiral with the features farthest from the center of the group in each turn.
+- [**Grid**](#grid): Generates a regular grid with a point symbol at each intersection.
 
 > Note: Displaced Points methodology does not alter feature geometry, meaning that points are not moved from their position. Changes are only visual, for rendering purpose. Each barycenter is themselves a cluster with an attribute features that contain the original features.
 
