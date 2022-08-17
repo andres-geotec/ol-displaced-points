@@ -1,33 +1,31 @@
 # Point displacement
 
-The Point Displacement methodology works to visualize all features of a point layer, even if they have the same location. To do this, the map takes the points falling in a given Distance tolerance from each other (cluster) and places them around their barycenter following different Placement methods:
+Point Displacement methodology works to visualize all features of a point layer, even if they have the same location. To do this, the map takes the points falling in a given Distance tolerance from each other (cluster) and places them around their barycenter following different Placement methods:
 
-- Ring: places all the features on a circle whose radius depends on the number of features to display.
-- Concentric rings: uses a set of concentric circles to show the features.
-- Grid: generates a regular grid with a point symbol at each intersection.
-  The Center symbol widget helps you customize the symbol and color of the middle point. For the distributed points symbols, you can apply any of the No symbols, Single symbol, Categorized, Graduated or Rule-based renderer using the Renderer drop-down list and customize them using the Renderer Settings… button.
-- Spiral: 
-
-While the minimal spacing of the Displacement lines depends on the point symbol renderer’s, you can still customize some of its settings such as the Stroke width, Stroke color and Size adjustment (eg, to add more spacing between the rendered points).
-
-Use the Labels group options to perform points labeling: the labels are placed near the displaced position of the symbol, and not at the feature real position. Other than the Label attribute, Label font and Label color, you can set the Minimum map scale to display the labels.
-
-> Note: Point Displacement renderer does not alter feature geometry, meaning that points are not moved from their position. They are still located at their initial place. Changes are only visual, for rendering purpose. Use instead the Processing Points displacement algorithm if you want to create displaced features.
-
-[Qgis Point displacement renderer](https://docs.qgis.org/3.22/en/docs/user_manual/working_with_vector/vector_properties.html#point-displacement-renderer)
+> Note: Point Displacement methodology does not alter feature geometry, meaning that points are not moved from their position. Changes are only visual, for rendering purpose. Each barycenter is themselves a cluster with an attribute features that contain the original features.
 
 ## Ring
-
+Places all the features on a circle whose radius depends on the number of features to display.
 ![Ring](./docs/mexico-ring.png)
 
 ## Concentric Rings
-
+Uses a set of concentric circles to show the features.
 ![Concentric Rings](./docs/mexico-concentric-rings.png)
 
-## Grid
+## Spiral
+Creates a spiral with the features farthest from the center of the group in each turn.
+![Spiral](./docs/mexico-spiral.png)
 
+## Grid
+Generates a regular grid with a point symbol at each intersection.
 ![Grid](./docs/mexico-grid.png)
 
-## Spiral
+## others
+- (style options)
+- (distance between points)
 
-![Spiral](./docs/mexico-spiral.png)
+## Attribution
+
+[Qgis Point displacement renderer](https://docs.qgis.org/3.22/en/docs/user_manual/working_with_vector/vector_properties.html#point-displacement-renderer)
+
+[ol-ext: SelectCluster](http://viglino.github.io/ol-ext/examples/animation/map.animatedcluster.html)
