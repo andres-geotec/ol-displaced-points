@@ -11,7 +11,7 @@ import { add as addCoordinate } from "ol/coordinate.js";
 
 /**
  * @typedef {Object} Options
- * @property {string} [methodPlacement=ring] methodPlacement: ring | concentric-rings | grid
+ * @property {string} [methodPlacement=ring] methodPlacement: ring | concentric-rings | spiral | grid
  * @property {number} [radioCenterPoint=6] radioCenterPoint
  * @property {number} [radioDisplacedPoints=6] radioDisplacedPoints
  */
