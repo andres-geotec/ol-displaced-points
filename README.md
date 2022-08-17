@@ -14,7 +14,7 @@ Point Displacement methodology works to visualize all features of a point layer,
 ## npm
 
 ```npm
-npm i circle-properties
+npm i ol-displaced-points
 ```
 
 ## Usage
