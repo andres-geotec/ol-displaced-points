@@ -19,41 +19,19 @@ npm i ol-displaced-points
 
 ## Usage
 
-[Example CodeSandbox](https://codesandbox.io/s/ol-displaced-points-twijp1)
-
-```html
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Displaced Points</title>
-    <meta charset="UTF-8" />
-
-    <style>
-      .map {
-        width: 100%;
-        height: 400px;
-      }
-    </style>
-  </head>
-
-  <body>
-    <div id="map" class="map" />
-
-    <script src="src/index.js"></script>
-  </body>
-</html>
-```
+The DisplacedPoints class extends of cluster class from OpenLayers. Review examples [Vector Layer](https://openlayers.org/en/latest/examples/vector-layer.html) and [Clustered Features](https://openlayers.org/en/latest/examples/cluster.html) of OpenLayers to get context or review our [use example on CodeSandbox](https://codesandbox.io/s/ol-displaced-points-twijp1).
 
 ```javascript
 import Map from "ol/Map";
-import TileLayer from "ol/layer/Tile";
-import OSM from "ol/source/OSM";
 import VectorLayer from "ol/layer/Vector";
-import View from "ol/View";
 import VectorSource from "ol/source/Vector";
 import GeoJSON from "ol/format/GeoJSON";
 
 import DisplacedPoints from "ol-displaced-points";
+
+const map = new Map({
+  ...
+});
 
 const sourceDisplacedPoints = new DisplacedPoints({
   source: new VectorSource({
@@ -61,24 +39,14 @@ const sourceDisplacedPoints = new DisplacedPoints({
     format: new GeoJSON(),
   }),
   distance: 80,
-  minDistance: 40,
+  minDistance: 40
 });
 
-new Map({
-  layers: [
-    new TileLayer({ source: new OSM() }),
-    new VectorLayer({
-      source: sourceDisplacedPoints,
-      style: styleDisplacedPoints,
-    }),
-  ],
-  target: "map",
-  view: new View({
-    center: [-101.012614352653245, 20.905432044070093],
-    zoom: 3,
-    projection: "EPSG:4326",
-  }),
-});
+map.addLayer(
+  new VectorLayer({
+    source: sourceDisplacedPoints
+  })
+);
 ```
 
 ![México Basic](./docs/mexico-basic.png)
@@ -129,16 +97,12 @@ function styleDisplacedPoints(f) {
   return styleCircle(radioPuntos, "white", `#${f.get("cvegeo")}a`);
 }
 
-new Map({
-  layers: [
-    new TileLayer({ source: new OSM() }),
-    new VectorLayer({
-      source: sourceDisplacedPoints,
-      style: styleDisplacedPoints,
-    }),
-  ],
-  ...
-});
+map.addLayer(
+  new VectorLayer({
+    source: sourceDisplacedPoints,
+    style: styleDisplacedPoints
+  })
+);
 ```
 
 ![México Colors](./docs/mexico-ring-colors.png)
@@ -159,7 +123,7 @@ const sourceDisplacedPoints = new DisplacedPoints({
 #### Concentric Rings
 
 ```javascript
-export const sourceDisplacedPoints = new DisplacedPoints({
+const sourceDisplacedPoints = new DisplacedPoints({
   ...
   placementMethod: "concentric-rings"
 });
@@ -170,7 +134,7 @@ export const sourceDisplacedPoints = new DisplacedPoints({
 #### Spiral
 
 ```javascript
-export const sourceDisplacedPoints = new DisplacedPoints({
+const sourceDisplacedPoints = new DisplacedPoints({
   ...
   placementMethod: "spiral"
 });
@@ -181,7 +145,7 @@ export const sourceDisplacedPoints = new DisplacedPoints({
 #### Grid
 
 ```javascript
-export const sourceDisplacedPoints = new DisplacedPoints({
+const sourceDisplacedPoints = new DisplacedPoints({
   ...
   placementMethod: "grid"
 });
@@ -190,9 +154,10 @@ export const sourceDisplacedPoints = new DisplacedPoints({
 ![México Grid](./docs/mexico-grid.png)
 
 ### (distance between points)
+
 coming soon...
 
-## Attribution
+## References
 
 [Qgis Point displacement renderer](https://docs.qgis.org/3.22/en/docs/user_manual/working_with_vector/vector_properties.html#point-displacement-renderer)
 
