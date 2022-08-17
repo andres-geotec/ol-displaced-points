@@ -11,7 +11,7 @@ import { add as addCoordinate } from "ol/coordinate.js";
 
 /**
  * @typedef {Object} Options
- * @property {string} [methodPlacement=ring] methodPlacement: ring | concentric-rings | spiral | grid
+ * @property {string} [placementMethod=ring] placementMethod: ring | concentric-rings | spiral | grid
  * @property {number} [radioCenterPoint=6] radioCenterPoint
  * @property {number} [radioDisplacedPoints=6] radioDisplacedPoints
  */
@@ -36,7 +36,7 @@ class DisplacedPoints extends Cluster {
      * @type {string}
      * @private
      */
-    this.methodPlacement = options.methodPlacement || "ring";
+    this.placementMethod = options.placementMethod || "ring";
 
     /**
      * @type {number}
@@ -73,16 +73,16 @@ class DisplacedPoints extends Cluster {
    *
    * @returns {string}
    */
-  getMethodPlacement() {
-    return this.methodPlacement;
+  getPlacementMethod() {
+    return this.placementMethod;
   }
 
   /**
    *
-   * @param {string} methodPlacement
+   * @param {string} placementMethod
    */
-  setMethodPlacement(methodPlacement) {
-    this.methodPlacement = methodPlacement;
+  setPlacementMethod(placementMethod) {
+    this.placementMethod = placementMethod;
     this.refresh();
   }
 
@@ -172,7 +172,7 @@ class DisplacedPoints extends Cluster {
      */
     const hypotenuseCenter = this.radioCenterPoint * Math.SQRT2;
 
-    switch (this.methodPlacement) {
+    switch (this.placementMethod) {
       case "ring":
         this.Ring(
           center.getCoordinates(),
