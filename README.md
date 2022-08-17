@@ -17,10 +17,13 @@ Use the Labels group options to perform points labeling: the labels are placed n
 
 
 ## Ring
-![Salario básico](./docs/mexico-ring.png)
+
+![Ring](./docs/mexico-ring.png)
 
 ## Concentric Rings
 
-![Salario básico](./docs/mexico-concentric-rings.png)
+![Concentric Rings](./docs/mexico-concentric-rings.png)
 
 ## Grid
+
+![Grid](./docs/mexico-grid.png)
