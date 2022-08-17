@@ -27,3 +27,7 @@ Use the Labels group options to perform points labeling: the labels are placed n
 ## Grid
 
 ![Grid](./docs/mexico-grid.png)
+
+## Spiral
+
+![Spiral](./docs/mexico-spiral.png)
