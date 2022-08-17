@@ -200,6 +200,15 @@ class DisplacedPoints extends Cluster {
         );
         break;
 
+      case "spiral":
+        this.Spiral(
+          center.getCoordinates(),
+          hypotenuseCenterAndPoints,
+          hypotenuseCenter,
+          features
+        );
+        break;
+
       default:
         console.error("Metodo de desplazamiento no permitido");
         break;
@@ -314,7 +323,9 @@ class DisplacedPoints extends Cluster {
         hypotenuseCenterAndPoints) /
       2;
 
-    const userPointRadius = this.numberToPixelUnits(originalPointRadius + hypotenuseCenter);
+    const userPointRadius = this.numberToPixelUnits(
+      originalPointRadius + hypotenuseCenter
+    );
 
     var yIndex = 0;
     while (pointsRemaining > 0) {
@@ -335,6 +346,23 @@ class DisplacedPoints extends Cluster {
         feature,
         addCoordinate(puntosNuevos[i], [shiftAmount, shiftAmount])
       );
+    });
+  }
+
+  Spiral(centerCords, hypotenuseCenterAndPoints, hypotenuseCenter, features) {
+    var radiusCurrent;
+    var currentAngle = 0;
+    var diameter = 2 * Math.max(hypotenuseCenterAndPoints, hypotenuseCenter);
+
+    features.forEach((feature) => {
+      radiusCurrent = diameter / 2 + (diameter * currentAngle) / (2 * Math.PI);
+      currentAngle = currentAngle + (diameter) / radiusCurrent;
+      const radiusCurrentPix = this.numberToPixelUnits(radiusCurrent);
+
+      this.addDisplacedPoints(feature, [
+        centerCords[0] + radiusCurrentPix * Math.sin(currentAngle),
+        centerCords[1] + radiusCurrentPix * Math.cos(currentAngle),
+      ]);
     });
   }
 
