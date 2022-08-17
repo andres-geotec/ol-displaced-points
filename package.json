@@ -1,6 +1,6 @@
 {
   "name": "ol-displaced-points",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Displaced Points methodology works to visualize all features of a point layer, even if they have the same location. The map takes the points falling in a given Distance tolerance from each other (cluster) and places them around their barycenter.",
   "scripts": {
     "pre-transpile": "shx rm -rf build/ol-displaced-points/* && shx mkdir -p build/ol-displaced-points && shx cp -rf src build/ol-displaced-points/src",
