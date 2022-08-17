@@ -7,9 +7,19 @@ const baseDir = dirname(fileURLToPath(import.meta.url));
 const buildDir = path.resolve(baseDir, "../build/ol-displaced-points");
 
 async function main() {
+  const argLocal = process.argv
+    .slice(2)
+    .find((arg) => arg.split("=")[0] === "local");
+
   const pkg = await fse.readJSON(path.resolve(baseDir, "../package.json"));
 
   // write out simplified package.json
+  if (argLocal) {
+    const localKey = argLocal.split("=")[1] || "local";
+    console.info(`build: package.name = "@${localKey}/ol-displaced-points"`);
+    pkg.name = `@${localKey}/ol-displaced-points`;
+  }
+
   pkg.main = "index.js";
   delete pkg.scripts;
   delete pkg.devDependencies;

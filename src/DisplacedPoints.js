@@ -7,10 +7,11 @@ import Point from "ol/geom/Point";
 
 import Cluster from "./Cluster";
 import Circle from "circle-properties";
+import { add as addCoordinate } from "ol/coordinate.js";
 
 /**
  * @typedef {Object} Options
- * @property {string} [methodPlacement=ring] methodPlacement: ring | concentric-rings | grid
+ * @property {string} [placementMethod=ring] placementMethod: ring | concentric-rings | spiral | grid
  * @property {number} [radioCenterPoint=6] radioCenterPoint
  * @property {number} [radioDisplacedPoints=6] radioDisplacedPoints
  */
@@ -35,7 +36,7 @@ class DisplacedPoints extends Cluster {
      * @type {string}
      * @private
      */
-    this.methodPlacement = options.methodPlacement || "ring";
+    this.placementMethod = options.placementMethod || "ring";
 
     /**
      * @type {number}
@@ -72,16 +73,16 @@ class DisplacedPoints extends Cluster {
    *
    * @returns {string}
    */
-  getMethodPlacement() {
-    return this.methodPlacement;
+  getPlacementMethod() {
+    return this.placementMethod;
   }
 
   /**
-   * 
-   * @param {string} methodPlacement 
+   *
+   * @param {string} placementMethod
    */
-  setMethodPlacement(methodPlacement) {
-    this.methodPlacement = methodPlacement;
+  setPlacementMethod(placementMethod) {
+    this.placementMethod = placementMethod;
     this.refresh();
   }
 
@@ -171,7 +172,7 @@ class DisplacedPoints extends Cluster {
      */
     const hypotenuseCenter = this.radioCenterPoint * Math.SQRT2;
 
-    switch (this.methodPlacement) {
+    switch (this.placementMethod) {
       case "ring":
         this.Ring(
           center.getCoordinates(),
@@ -191,6 +192,21 @@ class DisplacedPoints extends Cluster {
         break;
 
       case "grid":
+        this.Grid(
+          center.getCoordinates(),
+          hypotenuseCenterAndPoints,
+          hypotenuseCenter,
+          features
+        );
+        break;
+
+      case "spiral":
+        this.Spiral(
+          center.getCoordinates(),
+          hypotenuseCenterAndPoints,
+          hypotenuseCenter,
+          features
+        );
         break;
 
       default:
@@ -286,6 +302,68 @@ class DisplacedPoints extends Cluster {
       pointsRemaining -= actualPointsCurrentRing;
       ringNumber++;
     }
+  }
+
+  Grid(centerCords, hypotenuseCenterAndPoints, hypotenuseCenter, features) {
+    var puntosNuevos = [];
+
+    const nFeatures = features.length;
+    // var gridRadius = /** @type {double} */ -1.0;
+    var gridSize = -1;
+
+    const centerDiagonal = this.radioCenterPoint;
+    var pointsRemaining = nFeatures;
+    gridSize = Math.ceil(Math.sqrt(pointsRemaining));
+
+    if (pointsRemaining - Math.pow(gridSize - 1, 2) < gridSize) gridSize -= 1;
+
+    const originalPointRadius =
+      (centerDiagonal / 2 +
+        hypotenuseCenterAndPoints / 2 +
+        hypotenuseCenterAndPoints) /
+      2;
+
+    const userPointRadius = this.numberToPixelUnits(
+      originalPointRadius + hypotenuseCenter
+    );
+
+    var yIndex = 0;
+    while (pointsRemaining > 0) {
+      for (var xIndex = 0; xIndex < gridSize && pointsRemaining > 0; xIndex++) {
+        puntosNuevos.push([
+          centerCords[0] + userPointRadius * xIndex,
+          centerCords[1] + userPointRadius * yIndex,
+        ]);
+        pointsRemaining--;
+      }
+
+      yIndex++;
+    }
+
+    const shiftAmount = (-userPointRadius * (gridSize - 1)) / 2;
+    features.forEach((feature, i) => {
+      this.addDisplacedPoints(
+        feature,
+        addCoordinate(puntosNuevos[i], [shiftAmount, shiftAmount])
+      );
+    });
+  }
+
+  Spiral(centerCords, hypotenuseCenterAndPoints, hypotenuseCenter, features) {
+    var radiusCurrent;
+    var currentAngle = 0;
+    var diameter = 2 * Math.max(hypotenuseCenterAndPoints, hypotenuseCenter);
+
+    features.forEach((feature) => {
+      radiusCurrent = diameter / 2 + (diameter * currentAngle) / (2 * Math.PI);
+      currentAngle = currentAngle + (diameter) / radiusCurrent;
+      const radiusCurrentPix = this.numberToPixelUnits(radiusCurrent);
+
+      this.addDisplacedPoints(feature, [
+        centerCords[0] + radiusCurrentPix * Math.sin(currentAngle),
+        centerCords[1] + radiusCurrentPix * Math.cos(currentAngle),
+      ]);
+    });
   }
 
   addRing(coordinates, options) {
