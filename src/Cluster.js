@@ -56,6 +56,7 @@ import { getUid } from "ol/util";
  * ```
  * @property {VectorSource} [source=null] Source.
  * @property {boolean} [wrapX=true] Whether to wrap the world horizontally.
+ * @property {string} [delimiterField] Field to delimit clusters.
  */
 
 /**
@@ -78,6 +79,12 @@ class Cluster extends VectorSource {
       attributions: options.attributions,
       wrapX: options.wrapX,
     });
+
+    /**
+     * @type {string|undefined}
+     * @protected
+     */
+    this.delimiterField = options.delimiterField;
 
     /**
      * @type {number|undefined}
