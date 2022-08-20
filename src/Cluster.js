@@ -6,10 +6,7 @@ import EventType from "ol/events/EventType";
 import Feature from "ol/Feature";
 import Point from "ol/geom/Point";
 import VectorSource from "ol/source/Vector";
-import {
-  add as addCoordinate,
-  scale as scaleCoordinate,
-} from "ol/coordinate";
+import { add as addCoordinate, scale as scaleCoordinate } from "ol/coordinate";
 import { assert } from "ol/asserts";
 import {
   buffer,
@@ -273,32 +270,45 @@ class Cluster extends VectorSource {
     const mapDistance = this.distance * this.resolution;
     const features = this.source.getFeatures();
 
+    const delimiterField = this.delimiterField;
+    var delimitations = [];
+    features.forEach((f) => {
+      const type = f.get(delimiterField);
+      if (!delimitations.includes(type)) delimitations.push(type);
+    });
+
     /** @type {Object<string, true>} */
     const clustered = {};
 
-    for (let i = 0, ii = features.length; i < ii; i++) {
-      const feature = features[i];
-      if (!(getUid(feature) in clustered)) {
-        const geometry = this.geometryFunction(feature);
-        if (geometry) {
-          const coordinates = geometry.getCoordinates();
-          createOrUpdateFromCoordinate(coordinates, extent);
-          buffer(extent, mapDistance, extent);
+    delimitations.forEach((delimitation) => {
+      //for (let i = 0; i < features.length; i++) {
+      features.forEach((feature) => {
+        // const feature = features[i];
+        if (!(getUid(feature) in clustered)) {
+          const geometry = this.geometryFunction(feature);
+          if (geometry) {
+            const coordinates = geometry.getCoordinates();
+            createOrUpdateFromCoordinate(coordinates, extent);
+            buffer(extent, mapDistance, extent);
 
-          const neighbors = this.source
-            .getFeaturesInExtent(extent)
-            .filter(function (neighbor) {
-              const uid = getUid(neighbor);
-              if (uid in clustered) {
-                return false;
-              }
-              clustered[uid] = true;
-              return true;
-            });
-          this.features.push(this.createCluster(neighbors, extent));
+            const neighbors = this.source
+              .getFeaturesInExtent(extent)
+              .filter(function (neighbor) {
+                const uid = getUid(neighbor);
+                if (
+                  uid in clustered ||
+                  neighbor.get(delimiterField) !== delimitation
+                ) {
+                  return false;
+                }
+                clustered[uid] = true;
+                return true;
+              });
+            this.features.push(this.createCluster(neighbors, extent));
+          }
         }
-      }
-    }
+      });
+    });
   }
 
   /**
