@@ -21,17 +21,38 @@ npm i ol-displaced-points
 
 The DisplacedPoints class extends of cluster class from OpenLayers. Review examples [Vector Layer](https://openlayers.org/en/latest/examples/vector-layer.html) and [Clustered Features](https://openlayers.org/en/latest/examples/cluster.html) of OpenLayers to get context or review our [use example on CodeSandbox](https://codesandbox.io/s/ol-displaced-points-twijp1).
 
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Displaced Points</title>
+    <meta charset="UTF-8" />
+    <style>
+      .map {
+        width: 100%;
+        height: 400px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="map" class="map" />
+
+    <script src="src/index.js" type="module"></script>
+  </body>
+</html>
+```
+
 ```javascript
 import Map from "ol/Map";
+import TileLayer from "ol/layer/Tile";
+import OSM from "ol/source/OSM";
 import VectorLayer from "ol/layer/Vector";
+import View from "ol/View";
 import VectorSource from "ol/source/Vector";
 import GeoJSON from "ol/format/GeoJSON";
 
 import DisplacedPoints from "ol-displaced-points";
-
-const map = new Map({
-  ...
-});
 
 const sourceDisplacedPoints = new DisplacedPoints({
   source: new VectorSource({
@@ -39,14 +60,23 @@ const sourceDisplacedPoints = new DisplacedPoints({
     format: new GeoJSON(),
   }),
   distance: 80,
-  minDistance: 40
+  minDistance: 40,
 });
 
-map.addLayer(
-  new VectorLayer({
-    source: sourceDisplacedPoints
-  })
-);
+new Map({
+  layers: [
+    new TileLayer({ source: new OSM() }),
+    new VectorLayer({
+      source: sourceDisplacedPoints,
+    }),
+  ],
+  target: "map",
+  view: new View({
+    center: [-101.012614352653245, 20.905432044070093],
+    zoom: 3,
+    projection: "EPSG:4326",
+  }),
+});
 ```
 
 ![México Basic](./docs/mexico-basic.png)
@@ -96,13 +126,6 @@ function styleDisplacedPoints(f) {
 
   return styleCircle(radioPuntos, "white", `#${f.get("cvegeo")}a`);
 }
-
-map.addLayer(
-  new VectorLayer({
-    source: sourceDisplacedPoints,
-    style: styleDisplacedPoints
-  })
-);
 ```
 
 ![México Colors](./docs/mexico-ring-colors.png)
@@ -112,7 +135,7 @@ map.addLayer(
 #### Ring
 
 ```javascript
-const sourceDisplacedPoints = new DisplacedPoints({
+new DisplacedPoints({
   ...
   placementMethod: "ring" // default
 });
@@ -123,7 +146,7 @@ const sourceDisplacedPoints = new DisplacedPoints({
 #### Concentric Rings
 
 ```javascript
-const sourceDisplacedPoints = new DisplacedPoints({
+new DisplacedPoints({
   ...
   placementMethod: "concentric-rings"
 });
@@ -134,7 +157,7 @@ const sourceDisplacedPoints = new DisplacedPoints({
 #### Spiral
 
 ```javascript
-const sourceDisplacedPoints = new DisplacedPoints({
+new DisplacedPoints({
   ...
   placementMethod: "spiral"
 });
@@ -145,13 +168,24 @@ const sourceDisplacedPoints = new DisplacedPoints({
 #### Grid
 
 ```javascript
-const sourceDisplacedPoints = new DisplacedPoints({
+new DisplacedPoints({
   ...
   placementMethod: "grid"
 });
 ```
 
 ![México Grid](./docs/mexico-grid.png)
+
+### Delimit cluster
+
+If you need delimit the clusters based on some category, use the column name with which you want to delimit on the parameter `delimiterField`.
+
+```javascript
+new DisplacedPoints({
+  ...
+  delimiterField: "<field name>"
+});
+```
 
 ### (distance between points)
 
