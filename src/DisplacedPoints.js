@@ -18,9 +18,9 @@ import { add as addCoordinate } from "ol/coordinate.js";
  * - `spiral`: Creates a spiral with the features farthest from the center of the group in
  * each turn.
  * - `grid`: Generates a regular grid with a point symbol at each intersection.
- * @property {number} [radioCenterPoint=6] centric point radius, used for the distance between
+ * @property {number} [radiusCenterPoint=6] centric point radius, used for the distance between
  * the centric point and the nearest displaced points.
- * @property {number} [radioDisplacedPoints=6] displaced points radius, used for the distance
+ * @property {number} [radiusDisplacedPoints=6] displaced points radius, used for the distance
  * between each displaced point.
  */
 
@@ -52,13 +52,13 @@ class DisplacedPoints extends Cluster {
      * @type {number}
      * @protected
      */
-    this.radioCenterPoint = options.radioCenterPoint || 6;
+    this.radiusCenterPoint = options.radiusCenterPoint || 6;
 
     /**
      * @type {number}
      * @protected
      */
-    this.radioDisplacedPoints = options.radioDisplacedPoints || 6;
+    this.radiusDisplacedPoints = options.radiusDisplacedPoints || 6;
 
     /**
      * @type {Array<Feature>}
@@ -165,20 +165,20 @@ class DisplacedPoints extends Cluster {
      * @type {number}
      */
     const distanceRadiusCenterAndDisplacedPoints =
-      this.radioCenterPoint + this.radioDisplacedPoints;
+      this.radiusCenterPoint + this.radiusDisplacedPoints;
 
     /**
      * Hipotenusa = Lado opuesto al ángulo recto en un triángulo rectángulo.
-     * @type {number} √((radioCenterPoint + radioDisplacedPoints)² + (radioCenterPoint + radioDisplacedPoints)²)
+     * @type {number} √((radiusCenterPoint + radiusDisplacedPoints)² + (radiusCenterPoint + radiusDisplacedPoints)²)
      */
     const hypotenuseCenterAndPoints =
       distanceRadiusCenterAndDisplacedPoints * Math.SQRT2;
 
     /**
      * Hipotenusa = Lado opuesto al ángulo recto en un triángulo rectángulo.
-     * @type {number} √(radioCenterPoint² + radioCenterPoint²) / 100
+     * @type {number} √(radiusCenterPoint² + radiusCenterPoint²) / 100
      */
-    const hypotenuseCenter = this.radioCenterPoint * Math.SQRT2;
+    const hypotenuseCenter = this.radiusCenterPoint * Math.SQRT2;
 
     switch (this.placementMethod) {
       case "ring":
@@ -265,7 +265,7 @@ class DisplacedPoints extends Cluster {
     features
   ) {
     const nFeatures = features.length;
-    const centerDiagonal = this.radioCenterPoint;
+    const centerDiagonal = this.radiusCenterPoint;
 
     var pointsRemaining = nFeatures;
     var ringNumber = 1;
@@ -319,7 +319,7 @@ class DisplacedPoints extends Cluster {
     // var gridRadius = /** @type {double} */ -1.0;
     var gridSize = -1;
 
-    const centerDiagonal = this.radioCenterPoint;
+    const centerDiagonal = this.radiusCenterPoint;
     var pointsRemaining = nFeatures;
     gridSize = Math.ceil(Math.sqrt(pointsRemaining));
 
@@ -378,7 +378,7 @@ class DisplacedPoints extends Cluster {
     this.displacedRings.push(
       new Feature({
         geometry: new Point(coordinates),
-        anillo: options,
+        ring: options,
       })
     );
   }
