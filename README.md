@@ -87,8 +87,8 @@ new Map({
 ...
 import { Circle, Fill, Stroke, Style } from "ol/style";
 
-const radioPuntos = 5;
-const radioCentro = 5;
+const radiusCenter = 5;
+const radiusPoints = 5;
 const sourceDisplacedPoints = new DisplacedPoints({
   source: new VectorSource({
     url: "./features.geojson",
@@ -96,8 +96,8 @@ const sourceDisplacedPoints = new DisplacedPoints({
   }),
   distance: 80,
   minDistance: 40,
-  radioCenterPoint: radioCentro,
-  radioDisplacedPoints: radioPuntos,
+  radiusCenterPoint: radiusCenter,
+  radiusDisplacedPoints: radiusPoints,
 });
 
 
@@ -117,14 +117,15 @@ function styleCircle(radius, stroke, fill = "#0000") {
 }
 
 function styleDisplacedPoints(f) {
-  if (f.get("anillo")) {
-    return styleCircle(f.get("anillo").radius);
-  }
-  if (f.get("features")) {
-    return styleCircle(radioCentro, "white", "red");
+  if (f.get("ring")) {
+    return styleCircle(f.get("ring").radius);
   }
 
-  return styleCircle(radioPuntos, "white", `#${f.get("cvegeo")}a`);
+  if (f.get("features")) {
+    return styleCircle(radiusCenter, "white", "red");
+  }
+
+  return styleCircle(radiusPoints, "white", `#${f.get("cvegeo")}a`);
 }
 ```
 
