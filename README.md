@@ -189,6 +189,8 @@ coming soon...
 
 ## References
 
-[Qgis Point displacement renderer](https://docs.qgis.org/3.22/en/docs/user_manual/working_with_vector/vector_properties.html#point-displacement-renderer)
+- [Qgis Point displacement renderer](https://docs.qgis.org/3.22/en/docs/user_manual/working_with_vector/vector_properties.html#point-displacement-renderer)
 
-[ol-ext: SelectCluster](http://viglino.github.io/ol-ext/examples/animation/map.animatedcluster.html)
+- [ol-ext: SelectCluster](http://viglino.github.io/ol-ext/examples/animation/map.animatedcluster.html)
+
+- [ol.source.Cluster](https://openlayers.org/en/latest/apidoc/module-ol_source_Cluster-Cluster.html)
