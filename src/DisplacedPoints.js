@@ -11,25 +11,30 @@ import { add as addCoordinate } from "ol/coordinate.js";
 
 /**
  * @typedef {Object} Options
- * @property {string} [placementMethod=ring] placementMethod: ring | concentric-rings | spiral | grid
- * @property {number} [radioCenterPoint=6] radioCenterPoint
- * @property {number} [radioDisplacedPoints=6] radioDisplacedPoints
+ * @property {string} [placementMethod="ring"] Placement Method:
+ * - `grid`: Places all the features on a circle whose radius depends on the number of
+ * features to display.
+ * - `concentric-rings`: Uses a set of concentric circles to show the features.
+ * - `spiral`: Creates a spiral with the features farthest from the center of the group in
+ * each turn.
+ * - `grid`: Generates a regular grid with a point symbol at each intersection.
+ * @property {number} [radioCenterPoint=6] centric point radius, used for the distance between
+ * the centric point and the nearest displaced points.
+ * @property {number} [radioDisplacedPoints=6] displaced points radius, used for the distance
+ * between each displaced point.
  */
 
 /**
  * @classdesc
- * La metodología desplazamiento de puntos funciona para visualizar todas las
- * entidades de una capa de puntos, incluso si tienen la misma ubicación.
- *
- * Para hacer esto, el mapa toma los puntos que caen en una tolerancia de
- * Distancia dada entre sí (clúster) y los coloca alrededor de su baricentro.
+ * Displaced Points methodology works to visualize all features of a point layer, even if they
+ * have the same location. To do this, the map takes the points falling in a given Distance
+ * tolerance from each other (cluster) and places them around their barycenter.
  */
 class DisplacedPoints extends Cluster {
   /**
    * @param {Options} options DisplacedPoints options.
    */
   constructor(options) {
-    console.log("instancioansdo DisplacedPoints");
     super(options);
 
     /**
@@ -109,6 +114,10 @@ class DisplacedPoints extends Cluster {
     this.addFeatures(this.allFeatures());
   }
 
+  /**
+   * 
+   * @returns {Array<Feature>}
+   */
   allFeatures() {
     return [
       ...this.displacedConnectors,
@@ -123,12 +132,6 @@ class DisplacedPoints extends Cluster {
    * @protected
    */
   displacedPoints() {
-    /*if (this.features.length) {
-      const cluster = this.features[0];
-      this.pointsGroup(cluster.get("geometry"), cluster.get("features"));
-      return;
-    }*/
-
     this.features.forEach((cluster) => {
       this.pointsGroup(cluster.get("geometry"), cluster.get("features"));
     });

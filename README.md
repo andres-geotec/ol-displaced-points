@@ -132,13 +132,17 @@ function styleDisplacedPoints(f) {
 
 ### Placement methods
 
-#### Ring
-
 ```javascript
 new DisplacedPoints({
   ...
-  placementMethod: "ring" // default
+  placementMethod: "ring | concentric-rings | spiral | grid"
 });
+```
+
+#### Ring
+
+```javascript
+placementMethod: "ring"; // default
 ```
 
 ![México Ring](./docs/mexico-ring.png)
@@ -146,10 +150,7 @@ new DisplacedPoints({
 #### Concentric Rings
 
 ```javascript
-new DisplacedPoints({
-  ...
-  placementMethod: "concentric-rings"
-});
+placementMethod: "concentric-rings";
 ```
 
 ![México Concentric Rings](./docs/mexico-concentric-rings.png)
@@ -157,10 +158,7 @@ new DisplacedPoints({
 #### Spiral
 
 ```javascript
-new DisplacedPoints({
-  ...
-  placementMethod: "spiral"
-});
+placementMethod: "spiral";
 ```
 
 ![México Spiral](./docs/mexico-spiral.png)
@@ -168,10 +166,7 @@ new DisplacedPoints({
 #### Grid
 
 ```javascript
-new DisplacedPoints({
-  ...
-  placementMethod: "grid"
-});
+placementMethod: "grid";
 ```
 
 ![México Grid](./docs/mexico-grid.png)
