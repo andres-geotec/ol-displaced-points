@@ -11,25 +11,35 @@ import { add as addCoordinate } from "ol/coordinate.js";
 
 /**
  * @typedef {Object} Options
- * @property {string} [placementMethod=ring] placementMethod: ring | concentric-rings | spiral | grid
- * @property {number} [radioCenterPoint=6] radioCenterPoint
- * @property {number} [radioDisplacedPoints=6] radioDisplacedPoints
+ * @property {string} [placementMethod="ring"] Placement Method:
+ * - `grid`: Places all the features on a circle whose radius depends on the number of
+ * features to display.
+ * - `concentric-rings`: Uses a set of concentric circles to show the features.
+ * - `spiral`: Creates a spiral with the features farthest from the center of the group in
+ * each turn.
+ * - `grid`: Generates a regular grid with a point symbol at each intersection.
+ * @property {number} [radiusCenterPoint=6] centric point radius, used for the distance between
+ * the centric point and the nearest displaced points.
+ * @property {number} [radiusDisplacedPoints=6] displaced points radius, used for the distance
+ * between each displaced point.
  */
 
 /**
  * @classdesc
- * La metodología desplazamiento de puntos funciona para visualizar todas las
- * entidades de una capa de puntos, incluso si tienen la misma ubicación.
- *
- * Para hacer esto, el mapa toma los puntos que caen en una tolerancia de
- * Distancia dada entre sí (clúster) y los coloca alrededor de su baricentro.
+ * Displaced Points methodology works to visualize all features of a point layer, even if they
+ * have the same location. To do this, the map takes the points falling in a given Distance
+ * tolerance from each other (cluster) and places them around their barycenter.
+ * 
+ * > Note: Displaced Points methodology does not alter feature geometry, meaning that points
+ * are not moved from their position. Changes are only visual, for rendering purpose. Each
+ * barycenter is themselves a cluster with an attribute features that contain the original
+ * features.
  */
 class DisplacedPoints extends Cluster {
   /**
    * @param {Options} options DisplacedPoints options.
    */
   constructor(options) {
-    console.log("instancioansdo DisplacedPoints");
     super(options);
 
     /**
@@ -42,13 +52,13 @@ class DisplacedPoints extends Cluster {
      * @type {number}
      * @protected
      */
-    this.radioCenterPoint = options.radioCenterPoint || 6;
+    this.radiusCenterPoint = options.radiusCenterPoint || 6;
 
     /**
      * @type {number}
      * @protected
      */
-    this.radioDisplacedPoints = options.radioDisplacedPoints || 6;
+    this.radiusDisplacedPoints = options.radiusDisplacedPoints || 6;
 
     /**
      * @type {Array<Feature>}
@@ -109,6 +119,10 @@ class DisplacedPoints extends Cluster {
     this.addFeatures(this.allFeatures());
   }
 
+  /**
+   * 
+   * @returns {Array<Feature>}
+   */
   allFeatures() {
     return [
       ...this.displacedConnectors,
@@ -123,12 +137,6 @@ class DisplacedPoints extends Cluster {
    * @protected
    */
   displacedPoints() {
-    /*if (this.features.length) {
-      const cluster = this.features[0];
-      this.pointsGroup(cluster.get("geometry"), cluster.get("features"));
-      return;
-    }*/
-
     this.features.forEach((cluster) => {
       this.pointsGroup(cluster.get("geometry"), cluster.get("features"));
     });
@@ -157,20 +165,20 @@ class DisplacedPoints extends Cluster {
      * @type {number}
      */
     const distanceRadiusCenterAndDisplacedPoints =
-      this.radioCenterPoint + this.radioDisplacedPoints;
+      this.radiusCenterPoint + this.radiusDisplacedPoints;
 
     /**
      * Hipotenusa = Lado opuesto al ángulo recto en un triángulo rectángulo.
-     * @type {number} √((radioCenterPoint + radioDisplacedPoints)² + (radioCenterPoint + radioDisplacedPoints)²)
+     * @type {number} √((radiusCenterPoint + radiusDisplacedPoints)² + (radiusCenterPoint + radiusDisplacedPoints)²)
      */
     const hypotenuseCenterAndPoints =
       distanceRadiusCenterAndDisplacedPoints * Math.SQRT2;
 
     /**
      * Hipotenusa = Lado opuesto al ángulo recto en un triángulo rectángulo.
-     * @type {number} √(radioCenterPoint² + radioCenterPoint²) / 100
+     * @type {number} √(radiusCenterPoint² + radiusCenterPoint²) / 100
      */
-    const hypotenuseCenter = this.radioCenterPoint * Math.SQRT2;
+    const hypotenuseCenter = this.radiusCenterPoint * Math.SQRT2;
 
     switch (this.placementMethod) {
       case "ring":
@@ -257,7 +265,7 @@ class DisplacedPoints extends Cluster {
     features
   ) {
     const nFeatures = features.length;
-    const centerDiagonal = this.radioCenterPoint;
+    const centerDiagonal = this.radiusCenterPoint;
 
     var pointsRemaining = nFeatures;
     var ringNumber = 1;
@@ -311,7 +319,7 @@ class DisplacedPoints extends Cluster {
     // var gridRadius = /** @type {double} */ -1.0;
     var gridSize = -1;
 
-    const centerDiagonal = this.radioCenterPoint;
+    const centerDiagonal = this.radiusCenterPoint;
     var pointsRemaining = nFeatures;
     gridSize = Math.ceil(Math.sqrt(pointsRemaining));
 
@@ -370,7 +378,7 @@ class DisplacedPoints extends Cluster {
     this.displacedRings.push(
       new Feature({
         geometry: new Point(coordinates),
-        anillo: options,
+        ring: options,
       })
     );
   }
