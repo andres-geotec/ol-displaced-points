@@ -29,6 +29,11 @@ import { add as addCoordinate } from "ol/coordinate.js";
  * Displaced Points methodology works to visualize all features of a point layer, even if they
  * have the same location. To do this, the map takes the points falling in a given Distance
  * tolerance from each other (cluster) and places them around their barycenter.
+ * 
+ * > Note: Displaced Points methodology does not alter feature geometry, meaning that points
+ * are not moved from their position. Changes are only visual, for rendering purpose. Each
+ * barycenter is themselves a cluster with an attribute features that contain the original
+ * features.
  */
 class DisplacedPoints extends Cluster {
   /**
