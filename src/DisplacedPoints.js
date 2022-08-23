@@ -12,7 +12,7 @@ import { add as addCoordinate } from "ol/coordinate.js";
 /**
  * @typedef {Object} Options
  * @property {string} [placementMethod="ring"] Placement Method:
- * - `grid`: Places all the features on a circle whose radius depends on the number of
+ * - `ring`: Places all the features on a circle whose radius depends on the number of
  * features to display.
  * - `concentric-rings`: Uses a set of concentric circles to show the features.
  * - `spiral`: Creates a spiral with the features farthest from the center of the group in
