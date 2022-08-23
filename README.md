@@ -11,7 +11,7 @@ Displaced Points methodology works to visualize all features of a point layer, e
 
 ## Install
 
-## npm
+### npm
 
 ```npm
 npm i ol-displaced-points
