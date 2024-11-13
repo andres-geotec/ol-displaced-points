@@ -5,6 +5,9 @@
   "scripts": {
     "build-package": "npm run transpile && npm run generate-types && node tasks/prepare-package.js",
     "clean": "rm -rf build && rm -rf node_modules && rm package-lock.json && npm cache clean -f && npm cache verify",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs",
     "generate-types": "tsc --project config/tsconfig-build.json --declaration --declarationMap --emitDeclarationOnly --outdir build/ol-displaced-points",
     "pre-transpile": "shx rm -rf build/ol-displaced-points/* && shx mkdir -p build/ol-displaced-points && shx cp -rf src build/ol-displaced-points/src",
     "reinstall": "npm run clean && npm i",
@@ -42,7 +45,8 @@
     "fs-extra": "^11.2.0",
     "ol": "^10.2.1",
     "shx": "^0.3.4",
-    "typescript": "^5.6.3"
+    "typescript": "^5.6.3",
+    "vitepress": "^1.5.0"
   },
   "optionalDependencies": {
     "eslint": "^9.14.0"
