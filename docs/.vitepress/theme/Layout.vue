@@ -1,12 +1,15 @@
 <script setup>
 import { useData } from 'vitepress'
+import Mapa from "./Mapa.vue";
 
 // https://vitepress.dev/reference/runtime-api#usedata
 const { site, frontmatter } = useData()
 </script>
 
 <template>
-  <div v-if="frontmatter.home">
+  <Mapa />
+
+  <!-- <div v-if="frontmatter.home">
     <h1>{{ site.title }}</h1>
     <p>{{ site.description }}</p>
     <ul>
@@ -17,5 +20,5 @@ const { site, frontmatter } = useData()
   <div v-else>
     <a href="/">Home</a>
     <Content />
-  </div>
+  </div> -->
 </template>

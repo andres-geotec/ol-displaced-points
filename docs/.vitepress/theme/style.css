@@ -1,5 +1,12 @@
-
-html {
-  font-family: Arial, Helvetica;
+html,
+body {
+  margin: 0;
+  height: 100%;
 }
 
+#map {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+}
