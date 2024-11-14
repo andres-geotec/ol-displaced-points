@@ -5,7 +5,7 @@
 import Feature from "ol/Feature";
 import Point from "ol/geom/Point";
 
-import Cluster from "./Cluster";
+import DelimitedCluster from "./DelimitedCluster";
 import Circle from "circle-properties/";
 import { add as addCoordinate } from "ol/coordinate.js";
 
@@ -35,7 +35,7 @@ import { add as addCoordinate } from "ol/coordinate.js";
  * barycenter is themselves a cluster with an attribute features that contain the original
  * features.
  */
-class DisplacedPoints extends Cluster {
+class DisplacedPoints extends DelimitedCluster {
   /**
    * @param {Options} options DisplacedPoints options.
    */
