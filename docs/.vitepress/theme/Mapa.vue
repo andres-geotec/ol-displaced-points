@@ -27,8 +27,8 @@ const mapaDiv = ref(null)
 onMounted(() => map.setTarget(mapaDiv.value))
 
 // map.addLayer(goniometric(map.getView().getResolution()));
-// map.addLayer(capaCluster);
-map.addLayer(capaDesplazados);
+map.addLayer(capaCluster);
+// map.addLayer(capaDesplazados);
 </script>
 
 <template>
