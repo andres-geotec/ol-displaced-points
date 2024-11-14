@@ -5,6 +5,7 @@
   "scripts": {
     "build-package": "npm run transpile && npm run generate-types && node tasks/prepare-package.js",
     "clean": "rm -rf build && rm -rf node_modules && rm package-lock.json && npm cache clean -f && npm cache verify",
+    "docs": "npm run docs:dev",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
