@@ -5,8 +5,8 @@
 import Feature from "ol/Feature";
 import Point from "ol/geom/Point";
 
-import Cluster from "./Cluster";
-import Circle from "circle-properties";
+import DelimitedCluster from "./DelimitedCluster";
+import Circle from "circle-properties/";
 import { add as addCoordinate } from "ol/coordinate.js";
 
 /**
@@ -29,13 +29,13 @@ import { add as addCoordinate } from "ol/coordinate.js";
  * Displaced Points methodology works to visualize all features of a point layer, even if they
  * have the same location. To do this, the map takes the points falling in a given Distance
  * tolerance from each other (cluster) and places them around their barycenter.
- * 
+ *
  * > Note: Displaced Points methodology does not alter feature geometry, meaning that points
  * are not moved from their position. Changes are only visual, for rendering purpose. Each
  * barycenter is themselves a cluster with an attribute features that contain the original
  * features.
  */
-class DisplacedPoints extends Cluster {
+class DisplacedPoints extends DelimitedCluster {
   /**
    * @param {Options} options DisplacedPoints options.
    */
@@ -120,7 +120,7 @@ class DisplacedPoints extends Cluster {
   }
 
   /**
-   * 
+   *
    * @returns {Array<Feature>}
    */
   allFeatures() {

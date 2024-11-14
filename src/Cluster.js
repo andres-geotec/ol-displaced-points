@@ -1,24 +1,25 @@
 /**
- * @module ol/source/Cluster
+ * @module Cluster
  */
 
-import EventType from "ol/events/EventType";
-import Feature from "ol/Feature";
-import Point from "ol/geom/Point";
-import VectorSource from "ol/source/Vector";
-import { add as addCoordinate, scale as scaleCoordinate } from "ol/coordinate";
-import { assert } from "ol/asserts";
+import EventType from 'ol/events/EventType.js';
+import Feature from 'ol/Feature.js';
+import Point from 'ol/geom/Point.js';
+import VectorSource from 'ol/source/Vector.js';
+import {add as addCoordinate, scale as scaleCoordinate} from 'ol/coordinate.js';
+import {assert} from 'ol/asserts.js';
 import {
   buffer,
   createEmpty,
   createOrUpdateFromCoordinate,
   getCenter,
-} from "ol/extent";
-import { getUid } from "ol/util";
+} from 'ol/extent.js';
+import {getUid} from 'ol/util.js';
 
 /**
+ * @template {import("ol/Feature.js").FeatureLike} FeatureType
  * @typedef {Object} Options
- * @property {import("ol/source/Source").AttributionLike} [attributions] Attributions.
+ * @property {import("ol/source/Source.js").AttributionLike} [attributions] Attributions.
  * @property {number} [distance=20] Distance in pixels within which features will
  * be clustered together.
  * @property {number} [minDistance=0] Minimum distance in pixels between clusters.
@@ -26,8 +27,8 @@ import { getUid } from "ol/util";
  * By default no minimum distance is guaranteed. This config can be used to avoid
  * overlapping icons. As a tradoff, the cluster feature's position will no longer be
  * the center of all its features.
- * @property {function(Feature):Point} [geometryFunction]
- * Function that takes an {@link module:ol/Feature~Feature} as argument and returns an
+ * @property {function(FeatureType):(Point|null)} [geometryFunction]
+ * Function that takes a {@link module:ol/Feature~Feature} as argument and returns a
  * {@link module:ol/geom/Point~Point} as cluster calculation point for the feature. When a
  * feature should not be considered for clustering, the function should return
  * `null`. The default, which works when the underlying source contains point
@@ -39,7 +40,7 @@ import { getUid } from "ol/util";
  * ```
  * See {@link module:ol/geom/Polygon~Polygon#getInteriorPoint} for a way to get a cluster
  * calculation point for polygons.
- * @property {function(Point, Array<Feature>):Feature} [createCluster]
+ * @property {function(Point, Array<FeatureType>):Feature} [createCluster]
  * Function that takes the cluster's center {@link module:ol/geom/Point~Point} and an array
  * of {@link module:ol/Feature~Feature} included in this cluster. Must return a
  * {@link module:ol/Feature~Feature} that will be used to render. Default implementation is:
@@ -51,7 +52,7 @@ import { getUid } from "ol/util";
  *   });
  * }
  * ```
- * @property {VectorSource} [source=null] Source.
+ * @property {VectorSource<FeatureType>} [source=null] Source.
  * @property {boolean} [wrapX=true] Whether to wrap the world horizontally.
  * @property {string} [delimiterField] Field to delimit clusters.
  */
@@ -66,12 +67,15 @@ import { getUid } from "ol/util";
  * source `setSource(null)` has to be called to remove the listener reference
  * from the wrapped source.
  * @api
+ * @template {import('ol/Feature.js').FeatureLike} FeatureType
+ * @extends {VectorSource<Feature<import("ol/geom/Geometry.js").default>>}
  */
 class Cluster extends VectorSource {
   /**
-   * @param {Options} options Cluster options.
+   * @param {Options<FeatureType>} [options] Cluster options.
    */
   constructor(options) {
+    options = options || {};
     super({
       attributions: options.attributions,
       wrapX: options.wrapX,
@@ -114,7 +118,7 @@ class Cluster extends VectorSource {
     this.features = [];
 
     /**
-     * @param {Feature} feature Feature.
+     * @param {FeatureType} feature Feature.
      * @return {Point} Cluster calculation point.
      * @protected
      */
@@ -122,18 +126,21 @@ class Cluster extends VectorSource {
       options.geometryFunction ||
       function (feature) {
         const geometry = /** @type {Point} */ (feature.getGeometry());
-        assert(geometry.getType() == "Point", 10); // The default `geometryFunction` can only handle `Point` geometries
+        assert(
+          !geometry || geometry.getType() === 'Point',
+          'The default `geometryFunction` can only handle `Point` or null geometries',
+        );
         return geometry;
       };
 
     /**
-     * @type {function(Point, Array<Feature>):Feature}
+     * @type {function(Point, Array<FeatureType>):Feature}
      * @private
      */
     this.createCustomCluster_ = options.createCluster;
 
     /**
-     * @type {VectorSource|null}
+     * @type {VectorSource<FeatureType>|null}
      * @protected
      */
     this.source = null;
@@ -149,12 +156,13 @@ class Cluster extends VectorSource {
 
   /**
    * Remove all features from the source.
-   * @param {boolean} [opt_fast] Skip dispatching of {@link module:ol/source/VectorEventType~VectorEventType#removefeature} events.
+   * @param {boolean} [fast] Skip dispatching of {@link module:ol/source/VectorEventType~VectorEventType#removefeature} events.
    * @api
+   * @override
    */
-  clear(opt_fast) {
+  clear(fast) {
     this.features.length = 0;
-    super.clear(opt_fast);
+    super.clear(fast);
   }
 
   /**
@@ -168,7 +176,7 @@ class Cluster extends VectorSource {
 
   /**
    * Get a reference to the wrapped source.
-   * @return {VectorSource|null} Source.
+   * @return {VectorSource<FeatureType>|null} Source.
    * @api
    */
   getSource() {
@@ -176,12 +184,13 @@ class Cluster extends VectorSource {
   }
 
   /**
-   * @param {import("ol/extent").Extent} extent Extent.
+   * @param {import("ol/extent.js").Extent} extent Extent.
    * @param {number} resolution Resolution.
-   * @param {import("ol/proj/Projection").default} projection Projection.
+   * @param {import("ol/proj/Projection.js").default} projection Projection.
+   * @override
    */
   loadFeatures(extent, resolution, projection) {
-    this.source.loadFeatures(extent, resolution, projection);
+    this.source?.loadFeatures(extent, resolution, projection);
     if (resolution !== this.resolution) {
       this.resolution = resolution;
       this.refresh();
@@ -218,7 +227,7 @@ class Cluster extends VectorSource {
 
   /**
    * Replace the wrapped source.
-   * @param {VectorSource|null} source The new source for this instance.
+   * @param {VectorSource<FeatureType>|null} source The new source for this instance.
    * @api
    */
   setSource(source) {
@@ -234,6 +243,7 @@ class Cluster extends VectorSource {
 
   /**
    * Handle the source changing.
+   * @override
    */
   refresh() {
     this.clear();
@@ -295,10 +305,7 @@ class Cluster extends VectorSource {
               .getFeaturesInExtent(extent)
               .filter(function (neighbor) {
                 const uid = getUid(neighbor);
-                if (
-                  uid in clustered ||
-                  neighbor.get(delimiterField) !== delimitation
-                ) {
+                if (uid in clustered || neighbor.get(delimiterField) !== delimitation) {
                   return false;
                 }
                 clustered[uid] = true;
@@ -312,8 +319,8 @@ class Cluster extends VectorSource {
   }
 
   /**
-   * @param {Array<Feature>} features Features
-   * @param {import("ol/extent").Extent} extent The searched extent for these features.
+   * @param {Array<FeatureType>} features Features
+   * @param {import("ol/extent.js").Extent} extent The searched extent for these features.
    * @return {Feature} The cluster feature.
    * @protected
    */
@@ -336,12 +343,11 @@ class Cluster extends VectorSource {
     ]);
     if (this.createCustomCluster_) {
       return this.createCustomCluster_(geometry, features);
-    } else {
-      return new Feature({
-        geometry,
-        features,
-      });
     }
+    return new Feature({
+      geometry,
+      features,
+    });
   }
 }
 
