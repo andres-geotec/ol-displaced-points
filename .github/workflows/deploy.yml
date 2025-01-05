@@ -1,0 +1,68 @@
+# Ejemplo de flujo de trabajo para compilar e implantar un sitio VitePress en GitHub Pages
+#
+name: Implante el sitio VitePress en Pages
+
+on:
+  # Ejecute en push direccionados a la branch `main`.
+  # Cambie para `master` si estuviera usando la branch `master` por defecto.
+  push:
+    branches: [main]
+
+  # Permite ejecutar manualmente este flujo de trabajo en la guia Actions
+  workflow_dispatch:
+
+# Define permisos GITHUB_TOKEN para la implementación en GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Permite apenas una implantación simultánea, omitiendo ejecuciones en fila entre la ejecución en progreso y la última de la fila.
+# Sin embargo, NO cancela ejecuciones en progreso, pues queremos permitir que esas implantaciones de producción sean concuidas.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  # Trabajo de compilación
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # No necesario se lastUpdated no estuviera habilitado
+      # - uses: pnpm/action-setup@v3 # Desconecte eso si estuviera usando pnpm
+      #   with:
+      #     version: 9
+      # - uses: oven-sh/setup-bun@v1 # Desconecte eso se estuviera usando Bun
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm # o pnpm / yarn
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+      - name: Install dependencies
+        run: npm ci # o pnpm install / yarn install / bun install
+      - name: Build with VitePress
+        run: |
+          npm run docs:build # o pnpm docs:build / yarn docs:build / bun run docs:build
+          touch docs/.vitepress/dist/.nojekyll
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/.vitepress/dist
+
+  # Trabajo de implantación
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: build
+    runs-on: ubuntu-latest
+    name: Deploy
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
